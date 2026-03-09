@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}History - BADM500{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>History</h1>
+    <p>Videos you've watched recently</p>
+</div>
+
+{% with empty_title="No history yet" empty_text="Videos you watch will appear here." %}
+{% include 'includes/video_grid.html' %}
+{% endwith %}
+{% endblock %}

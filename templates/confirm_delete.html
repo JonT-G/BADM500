@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Video - BADM500{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="form-container">
+        <h1>Delete Video</h1>
+        <p class="form-subtitle">Are you sure you want to delete <strong>{{ video.title }}</strong>? This cannot be undone.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-danger">Yes, Delete</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'watch' video.pk %}">Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

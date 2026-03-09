@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Watch Later - BADM500{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Watch Later</h1>
+    <p>Videos you've saved for later</p>
+</div>
+
+{% with empty_title="Nothing saved yet" empty_text="Save videos to watch later using the &#128278; button on any video." %}
+{% include 'includes/video_grid.html' %}
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}BADM500{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Latest Videos</h1>
+</div>
+
+{% with empty_title="No videos yet" empty_text='Be the first to <a href="/upload/">upload a video</a>!' %}
+{% include 'includes/video_grid.html' %}
+{% endwith %}
+
+{% if videos.has_other_pages %}
+<nav class="pagination">
+    {% if videos.has_previous %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ videos.previous_page_number }}" class="page-link">&laquo; Prev</a>
+    {% endif %}
+    {% for num in videos.paginator.page_range %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}" class="page-link {% if videos.number == num %}active{% endif %}">{{ num }}</a>
+    {% endfor %}
+    {% if videos.has_next %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ videos.next_page_number }}" class="page-link">Next &raquo;</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

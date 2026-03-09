@@ -1,0 +1,30 @@
+{% load video_extras %}
+{% comment %}
+Reusable video-card grid. Pass a ``videos`` queryset/list to use.
+{% endcomment %}
+<section class="video-grid">
+    {% for video in videos %}
+    <a href="{% url 'watch' video.pk %}" class="video-card">
+        <div class="thumbnail">
+            {% if video.thumbnail %}
+            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">
+            {% else %}
+            <img src="https://placehold.co/400x225/1a1a2e/e94560?text={{ video.title|truncatewords:2|urlencode }}" alt="{{ video.title }}">
+            {% endif %}
+            {% if video.duration %}<span class="duration">{{ video.duration|format_duration }}</span>{% endif %}
+        </div>
+        <div class="card-body">
+            <h3>{{ video.title }}</h3>
+            <div class="card-meta">
+                <div class="avatar-sm">{{ video.author.username|first|upper }}</div>
+                <span>{{ video.author.username }} &middot; {{ video.views }} view{{ video.views|pluralize }} &middot; {{ video.created_at|timesince }} ago</span>
+            </div>
+        </div>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+        <h2>{{ empty_title|default:"No videos" }}</h2>
+        <p>{{ empty_text|default:"" }}</p>
+    </div>
+    {% endfor %}
+</section>

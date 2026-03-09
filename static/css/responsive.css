@@ -1,0 +1,236 @@
+/* ===== Responsive ===== */
+
+/* Tablet and small desktop */
+@media (max-width: 900px) {
+    .player-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-sidebar {
+        margin-top: 24px;
+    }
+
+    .sidebar-video {
+        max-width: 500px;
+    }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+    /* Nav collapses */
+    nav ul {
+        display: none;
+        position: absolute;
+        top: 56px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 8px 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-check:checked ~ nav ul {
+        display: flex;
+    }
+
+    nav li a {
+        padding: 12px 24px;
+        display: block;
+    }
+
+    .nav-search {
+        flex: 1;
+        margin: 0 12px;
+    }
+
+    /* Sidebar becomes a slide-out overlay */
+    .left-sidebar {
+        position: fixed;
+        left: -260px;
+        top: 56px;
+        height: calc(100vh - 56px);
+        transition: left var(--transition);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+        width: var(--sidebar-width) !important;
+        z-index: 60;
+    }
+
+    .sidebar-check:checked ~ .app-layout .left-sidebar {
+        left: 0;
+        width: var(--sidebar-width) !important;
+    }
+
+    .sidebar-check:checked ~ .app-layout .left-sidebar .sidebar-label,
+    .sidebar-check:checked ~ .app-layout .left-sidebar .sidebar-section-title {
+        display: block;
+    }
+
+    .sidebar-check:checked ~ .app-layout .left-sidebar .sidebar-item {
+        justify-content: flex-start;
+        padding: 10px 24px;
+    }
+
+    .sidebar-check:checked ~ .app-layout .left-sidebar .sidebar-icon {
+        margin-right: 16px;
+    }
+
+    /* Overlay behind sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 55;
+    }
+
+    .sidebar-check:checked ~ .app-layout .sidebar-overlay {
+        display: block;
+    }
+
+    /* Grid adapts */
+    .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    /* Profile collapses nicely */
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .profile-header .btn-subscribe {
+        position: static;
+        margin-top: 16px;
+    }
+
+    .profile-stats {
+        justify-content: center;
+    }
+
+    /* Forms shrink gracefully */
+    .form-container {
+        padding: 24px;
+    }
+
+    /* Sidebar video thumbs shrink */
+    .sidebar-video .thumb-sm {
+        width: 120px;
+        height: 68px;
+    }
+
+    /* Less padding on main */
+    .app-main {
+        padding: 16px;
+    }
+
+    /* Watch page adjustments */
+    .channel-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .video-info .video-stats {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .video-info h1 {
+        font-size: 1.15em;
+    }
+
+    .comment-form {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .comment-form .avatar-sm {
+        display: none;
+    }
+
+    .comment-form textarea {
+        min-height: 60px;
+    }
+
+    .comment-form .btn {
+        align-self: flex-end;
+    }
+
+    .page-header h1 {
+        font-size: 1.4em;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .nav-search {
+        margin: 0 4px;
+    }
+
+    .nav-search input {
+        font-size: 0.85em;
+        padding: 7px 12px;
+    }
+
+    .nav-search button {
+        padding: 7px 12px;
+    }
+
+    .nav-logo {
+        font-size: 1.1em;
+    }
+
+    .profile-header {
+        padding: 20px 16px;
+    }
+
+    .profile-avatar {
+        width: 72px;
+        height: 72px;
+        font-size: 1.8em;
+    }
+
+    .profile-stats {
+        gap: 16px;
+    }
+
+    .video-info .video-actions {
+        flex-wrap: wrap;
+    }
+
+    .video-info .video-actions a,
+    .video-info .video-actions button {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .form-container {
+        padding: 20px 16px;
+        border-radius: var(--radius-sm);
+    }
+
+    .auth-container {
+        margin: 32px auto;
+        padding: 0 12px;
+    }
+
+    .file-upload-area {
+        padding: 32px 16px;
+    }
+
+    .messages {
+        right: 12px;
+        left: 12px;
+        max-width: none;
+    }
+}

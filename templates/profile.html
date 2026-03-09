@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load video_extras %}
+
+{% block title %}{{ profile_user.username }} - BADM500{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-avatar">
+        {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="{{ profile_user.username }}" class="avatar-img-lg">
+        {% else %}
+        {{ profile_user.username|first|upper }}
+        {% endif %}
+    </div>
+    <div class="profile-details">
+        <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+        <div class="profile-handle">@{{ profile_user.username }}</div>
+        {% if profile.bio %}
+        <div class="profile-bio">{{ profile.bio }}</div>
+        {% endif %}
+        <div class="profile-stats">
+            <div class="stat">
+                <span class="stat-value">{{ videos|length }}</span>
+                <span class="stat-label">Videos</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">{{ sub_count }}</span>
+                <span class="stat-label">Subscribers</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">{{ total_views }}</span>
+                <span class="stat-label">Views</span>
+            </div>
+        </div>
+    </div>
+    {% if user == profile_user %}
+    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-outline">Edit Profile</a>
+    {% elif user.is_authenticated %}
+    <a href="{% url 'subscribe' profile_user.username %}" class="btn-subscribe {% if is_subscribed %}subscribed{% endif %}">
+        {% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}
+    </a>
+    {% endif %}
+</div>
+
+<div class="profile-tabs">
+    <a href="?tab=videos" class="{% if tab == 'videos' %}active{% endif %}">Videos</a>
+    <a href="?tab=about" class="{% if tab == 'about' %}active{% endif %}">About</a>
+</div>
+
+{% if tab == 'videos' %}
+<div class="profile-tab-content active">
+    <section class="video-grid">
+        {% for video in videos %}
+        <a href="{% url 'watch' video.pk %}" class="video-card">
+            <div class="thumbnail">
+                {% if video.thumbnail %}
+                <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">
+                {% else %}
+                <img src="https://placehold.co/400x225/1a1a2e/e94560?text={{ video.title|truncatewords:2|urlencode }}" alt="{{ video.title }}">
+                {% endif %}
+                {% if video.duration %}<span class="duration">{{ video.duration|format_duration }}</span>{% endif %}
+            </div>
+            <div class="card-body">
+                <h3>{{ video.title }}</h3>
+                <div class="card-meta">
+                    <span>{{ video.views }} views &middot; {{ video.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <h2>No videos yet</h2>
+            <p>{% if user == profile_user %}<a href="{% url 'upload' %}">Upload your first video!</a>{% else %}This user hasn't uploaded any videos yet.{% endif %}</p>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% else %}
+<div class="profile-tab-content active">
+    <div class="video-description">
+        <h3>About {{ profile_user.get_full_name|default:profile_user.username }}</h3>
+        {% if profile.bio %}
+        <p>{{ profile.bio|linebreaksbr }}</p>
+        {% else %}
+        <p class="text-muted">No bio yet.{% if user == profile_user %} <a href="{% url 'edit_profile' %}">Add one!</a>{% endif %}</p>
+        {% endif %}
+        <p><strong>Joined:</strong> {{ profile_user.date_joined|date:"F Y" }}</p>
+        <p><strong>Username:</strong> @{{ profile_user.username }}</p>
+        {% if profile_user.email and user == profile_user %}
+        <p><strong>Email:</strong> {{ profile_user.email }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

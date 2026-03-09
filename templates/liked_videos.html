@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Liked Videos - BADM500{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Liked Videos</h1>
+    <p>Videos you've given a thumbs up</p>
+</div>
+
+{% with empty_title="No liked videos" empty_text="Videos you like will show up here." %}
+{% include 'includes/video_grid.html' %}
+{% endwith %}
+{% endblock %}

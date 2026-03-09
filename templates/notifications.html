@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - BADM500{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Notifications</h1>
+    {% if notifications %}
+    <p>Stay up to date with activity on your content</p>
+    {% endif %}
+</div>
+
+{% if notifications %}
+<div class="notification-list">
+    {% for notif in notifications %}
+    <{% if notif.video %}a href="{% url 'watch' notif.video.pk %}"{% else %}div{% endif %} class="notification-item {% if not notif.is_read %}unread{% endif %}">
+        <div class="notification-avatar">
+            {% if notif.actor.profile.avatar %}
+            <img src="{{ notif.actor.profile.avatar.url }}" alt="{{ notif.actor.username }}" class="avatar-img">
+            {% else %}
+            {{ notif.actor.username|first|upper }}
+            {% endif %}
+        </div>
+        <div class="notification-content">
+            <p>
+                <strong>{{ notif.actor.username }}</strong>
+                {{ notif.message }}
+            </p>
+            <span class="notification-time">{{ notif.created_at|timesince }} ago</span>
+        </div>
+    </{% if notif.video %}a{% else %}div{% endif %}>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>No notifications</h2>
+    <p>You're all caught up!</p>
+</div>
+{% endif %}
+{% endblock %}

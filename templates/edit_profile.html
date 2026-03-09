@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - BADM500{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="form-container">
+        <h1>Edit Profile</h1>
+        <p class="form-subtitle">Update your bio and profile picture</p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Profile Picture</label>
+                <div class="avatar-preview">
+                    {% if form.instance.avatar %}
+                    <img src="{{ form.instance.avatar.url }}" alt="Current avatar" class="avatar-preview-img">
+                    {% else %}
+                    <div class="profile-avatar avatar-inline">{{ user.username|first|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="file-upload-group avatar-upload-group">
+                    <label for="id_avatar" class="btn btn-sm btn-outline btn-choose-file">Choose Image</label>
+                    {{ form.avatar }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_bio">Bio</label>
+                {{ form.bio }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'profile' user.username %}">Back to profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

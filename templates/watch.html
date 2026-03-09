@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load video_extras %}
+
+{% block title %}{{ video.title }} - BADM500{% endblock %}
+
+{% block content %}
+<div class="player-layout">
+    <div class="player-main">
+        <div class="player-container">
+            <video controls {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}>
+                <source src="{% url 'stream_video' video.pk %}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="video-info">
+            <h1>{{ video.title }}</h1>
+            <div class="video-stats">
+                <span>{{ video.views }} view{{ video.views|pluralize }} &middot; {{ video.created_at|date:"F j, Y" }}</span>
+                <div class="video-actions">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'like' video.pk %}?type=like" class="action-btn {% if user_liked %}active-like{% endif %}">&#128077; {{ video.like_count }}</a>
+                    <a href="{% url 'like' video.pk %}?type=dislike" class="action-btn {% if user_disliked %}active-like{% endif %}">&#128078; {{ video.dislike_count }}</a>
+                    <a href="{% url 'toggle_save' video.pk %}" class="action-btn {% if is_saved %}active-like{% endif %}">&#128278; {% if is_saved %}Saved{% else %}Save{% endif %}</a>
+                    {% else %}
+                    <a href="{% url 'login' %}">&#128077; {{ video.like_count }}</a>
+                    <a href="{% url 'login' %}">&#128078; {{ video.dislike_count }}</a>
+                    <a href="{% url 'login' %}">&#128278; Save</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="channel-bar">
+            <div class="channel-info">
+                <div class="avatar">
+                    {% if video.author.profile.avatar %}
+                    <img src="{{ video.author.profile.avatar.url }}" alt="{{ video.author.username }}" class="avatar-img-lg">
+                    {% else %}
+                    {{ video.author.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="channel-name">
+                        <a href="{% url 'profile' video.author.username %}">{{ video.author.username }}</a>
+                    </div>
+                    <div class="subscriber-count">@{{ video.author.username }} &middot; {{ video.author.subscribers.count }} subscriber{{ video.author.subscribers.count|pluralize }}</div>
+                </div>
+            </div>
+            {% if user.is_authenticated and user != video.author %}
+            <a href="{% url 'subscribe' video.author.username %}" class="btn-subscribe {% if is_subscribed %}subscribed{% endif %}">
+                {% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}
+            </a>
+            {% elif not user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn-subscribe">Subscribe</a>
+            {% endif %}
+        </div>
+
+        {% if video.description %}
+        <div class="video-description">
+            <p>{{ video.description|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+
+        {% if user == video.author %}
+        <div class="delete-video-wrap">
+            <a href="{% url 'delete_video' video.pk %}" class="btn btn-sm btn-delete-video">&#128465; Delete Video</a>
+        </div>
+        {% endif %}
+
+        <div class="comments-section">
+            <h3>Comments ({{ comments|length }})</h3>
+
+            {% if user.is_authenticated %}
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                <div class="avatar-sm">
+                    {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="avatar-img">
+                    {% else %}
+                    {{ user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <textarea name="comment_text" placeholder="Add a comment..." required></textarea>
+                <button type="submit" class="btn btn-sm btn-primary btn-comment-post">Post</button>
+            </form>
+            {% else %}
+            <p class="text-muted">
+                <a href="{% url 'login' %}">Sign in</a> to leave a comment.
+            </p>
+            {% endif %}
+
+            <div>
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="avatar-sm">
+                        {% if comment.author.profile.avatar %}
+                        <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}" class="avatar-img">
+                        {% else %}
+                        {{ comment.author.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <strong>{{ comment.author.username }}</strong>
+                            <span>{{ comment.created_at|timesince }} ago</span>
+                        </div>
+                        <div class="comment-text">{{ comment.text }}</div>
+                        <div class="comment-actions">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'vote_comment' comment.pk %}?type=up" class="comment-vote {% if comment.user_upvoted %}active-up{% endif %}">&#9650; {{ comment.upvote_count }}</a>
+                            <a href="{% url 'vote_comment' comment.pk %}?type=down" class="comment-vote {% if comment.user_downvoted %}active-down{% endif %}">&#9660; {{ comment.downvote_count }}</a>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="comment-vote">&#9650; {{ comment.upvote_count }}</a>
+                            <a href="{% url 'login' %}" class="comment-vote">&#9660; {{ comment.downvote_count }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No comments yet. Be the first!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="right-sidebar">
+        <h3>Up Next</h3>
+        {% for rv in related_videos %}
+        <a href="{% url 'watch' rv.pk %}" class="sidebar-video">
+            <div class="thumb-sm">
+                {% if rv.thumbnail %}
+                <img src="{{ rv.thumbnail.url }}" alt="{{ rv.title }}">
+                {% else %}
+                <img src="https://placehold.co/168x94/16213e/e94560?text={{ rv.title|truncatewords:2|urlencode }}" alt="{{ rv.title }}">
+                {% endif %}
+                {% if rv.duration %}<span class="duration">{{ rv.duration|format_duration }}</span>{% endif %}
+            </div>
+            <div class="thumb-info">
+                <h4>{{ rv.title }}</h4>
+                <p>{{ rv.author.username }} &middot; {{ rv.views }} views</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+    var v=document.querySelector('video'),k='vt_{{video.pk}}';
+    v.addEventListener('loadedmetadata',function(){var t=sessionStorage.getItem(k);if(t)v.currentTime=+t;});
+    v.addEventListener('timeupdate',function(){sessionStorage.setItem(k,v.currentTime);});
+})();
+</script>
+{% endblock %}
+
+

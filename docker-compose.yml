@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - media_data:/app/media
+      - db_data:/app/db
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=badm500.settings
+
+volumes:
+  media_data:
+  db_data:
