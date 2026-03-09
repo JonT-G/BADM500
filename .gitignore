@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Database
+db/*.sqlite3
+
+# Media uploads
+media/
+
+# IDE / OS
+*.lnk
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Docs (not source code)
+*.pdf
