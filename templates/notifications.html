@@ -1,3 +1,6 @@
+{# Page: Notifications — lists all notifications for the logged-in user. #}
+{# Unread notifications are marked as read the moment this page is opened (done in the view). #}
+{# Extends base.html. #}
 {% extends 'base.html' %}
 
 {% block title %}Notifications - BADM500{% endblock %}
@@ -13,13 +16,17 @@
 {% if notifications %}
 <div class="notification-list">
     {% for notif in notifications %}
-    <{% if notif.video %}a href="{% url 'watch' notif.video.pk %}"{% else %}div{% endif %} class="notification-item {% if not notif.is_read %}unread{% endif %}">
+
+    {# If the notification is linked to a video, the whole item is a clickable link. #}
+    {# Otherwise it is just a plain div (e.g. a subscription notification has no video). #}
+    {% if notif.video %}
+    <a href="{% url 'watch' notif.video.pk %}" class="notification-item {% if not notif.is_read %}unread{% endif %}">
+    {% else %}
+    <div class="notification-item {% if not notif.is_read %}unread{% endif %}">
+    {% endif %}
+
         <div class="notification-avatar">
-            {% if notif.actor.profile.avatar %}
-            <img src="{{ notif.actor.profile.avatar.url }}" alt="{{ notif.actor.username }}" class="avatar-img">
-            {% else %}
-            {{ notif.actor.username|first|upper }}
-            {% endif %}
+            {% include 'includes/avatar.html' with avatar_user=notif.actor avatar_class="avatar-img" %}
         </div>
         <div class="notification-content">
             <p>
@@ -28,7 +35,13 @@
             </p>
             <span class="notification-time">{{ notif.created_at|timesince }} ago</span>
         </div>
-    </{% if notif.video %}a{% else %}div{% endif %}>
+
+    {% if notif.video %}
+    </a>
+    {% else %}
+    </div>
+    {% endif %}
+
     {% endfor %}
 </div>
 {% else %}

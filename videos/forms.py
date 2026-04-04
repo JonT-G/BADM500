@@ -1,4 +1,6 @@
-"""Forms for video upload, user registration, and profile editing."""
+"""Forms for video upload, user registration and profile editing.
+Render HTML input fields and validate submitted data.
+"""
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User

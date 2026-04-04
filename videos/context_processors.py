@@ -1,4 +1,6 @@
-"""Context processors for the videos app."""
+"""Context processors for the videos app.
+Available in every template because we added videos.context_processors.notifications to settings.py. 
+"""
 
 def notifications(request):
     """Provide unread notification count to every template."""

@@ -1,7 +1,8 @@
+{# Reusable video card grid. #}
+{# Requires: videos (queryset or list of Video objects) #}
+{# Optional: empty_title, empty_text — shown when the list is empty #}
+{# Usage: {% include 'includes/video_grid.html' %} #}
 {% load video_extras %}
-{% comment %}
-Reusable video-card grid. Pass a ``videos`` queryset/list to use.
-{% endcomment %}
 <section class="video-grid">
     {% for video in videos %}
     <a href="{% url 'watch' video.pk %}" class="video-card">

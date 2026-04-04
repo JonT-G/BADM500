@@ -1,4 +1,9 @@
-"""Django admin configuration for all video-platform models."""
+"""Django admin configuration for all video-platform models. Built-in django feature
+A full UI browser to view and manage all data.
+Username: admin
+Password: admin123
+Role: superuser 
+"""
 from django.contrib import admin
 
 from .models import (

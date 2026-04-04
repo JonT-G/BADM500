@@ -13,8 +13,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 class Video(models.Model):
-    """A user-uploaded video with title, description, and visibility."""
-
+    """A user uploaded video with title, description, and visibility."""
     VISIBILITY_CHOICES = [
         ('public', 'Public'),
         ('unlisted', 'Unlisted'),
@@ -50,7 +49,6 @@ class Video(models.Model):
 
 class Comment(models.Model):
     """A text comment left on a video."""
-
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
@@ -72,7 +70,7 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    """A like or dislike on a video (one per user per video)."""
+    """A like or dislike on a video."""
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     is_like = models.BooleanField(default=True)
@@ -86,7 +84,7 @@ class Like(models.Model):
 
 
 class Subscription(models.Model):
-    """A subscriber ↔ channel relationship between two users."""
+    """A subscriber subscribing to a channel."""
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     channel = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers')
     created_at = models.DateTimeField(default=timezone.now)
@@ -99,7 +97,7 @@ class Subscription(models.Model):
 
 
 class CommentVote(models.Model):
-    """Upvote or downvote on a comment (one per user per comment)."""
+    """Upvote or downvote on a comment."""
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='votes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_votes')
     is_upvote = models.BooleanField(default=True)
@@ -113,7 +111,7 @@ class CommentVote(models.Model):
 
 
 class Profile(models.Model):
-    """Extended user profile with bio and avatar image."""
+    """User profile with bio and avatar image."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, default='')
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
@@ -123,7 +121,7 @@ class Profile(models.Model):
 
 
 class WatchHistory(models.Model):
-    """Records which videos a user has watched (most-recent first)."""
+    """Keeps track of which videos a user has watched."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='watch_history')
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='history_entries')
     watched_at = models.DateTimeField(auto_now=True)
@@ -137,7 +135,7 @@ class WatchHistory(models.Model):
 
 
 class WatchLater(models.Model):
-    """Videos a user has saved for later viewing."""
+    """Videos a user has saved to watch later."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='watch_later')
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='saved_entries')
     added_at = models.DateTimeField(default=timezone.now)
@@ -151,7 +149,7 @@ class WatchLater(models.Model):
 
 
 class Notification(models.Model):
-    """A notification triggered by user interactions (likes, comments, etc.)."""
+    """A notification triggered by user interactions"""
     VERB_CHOICES = [
         ('liked', 'liked your video'),
         ('commented', 'commented on your video'),
@@ -174,14 +172,14 @@ class Notification(models.Model):
 
     @property
     def message(self):
-        """Human-readable notification text (without actor name)."""
+        """Give the notification message. For example: "Jon liked your video "'m Tired"." """
         verb_text = self.get_verb_display()
         if self.video and self.verb != 'subscribed':
             return f'{verb_text} "{self.video.title}"'
         return verb_text
 
 
-# Auto-create a Profile whenever a new User is created
+# Auto-create a Profile whenever a new User is created, no need to do manually.
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

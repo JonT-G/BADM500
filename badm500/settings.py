@@ -1,15 +1,15 @@
-"""Django settings for the BADM500 video-sharing platform."""
+"""Django settings for the video-sharing platform."""
 
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = 'django-insecure-bqjhww9(-4l$7o)3*6y6ai-x!dipvbzldcfl1_x^(r@(7(-ic='
+#just for cookies and sessions, but should be random and secret if real production. Maybe change?
+SECRET_KEY = 'ThisIsForCokkiesAndSessionsOnly'
 DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
+#https://docs.djangoproject.com/en/6.0/ref/contrib/
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,17 +20,18 @@ INSTALLED_APPS = [
     'videos',
 ]
 
+# code that runs on every request, in order.
+#https://docs.djangoproject.com/en/6.0/topics/http/middleware/
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',           # adds security headers
+    'django.contrib.sessions.middleware.SessionMiddleware',    # loads the session on each request
+    'django.middleware.csrf.CsrfViewMiddleware',               # protects forms from cross-site attacks
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # attaches request.user
+    'django.contrib.messages.middleware.MessageMiddleware',    # attaches flash messages
 ]
 
 ROOT_URLCONF = 'badm500.urls'
+#match URL from badm500/urls.py
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -50,7 +51,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'badm500.wsgi.application'
 
 # Database
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -58,35 +58,28 @@ DATABASES = {
     }
 }
 
-# Password validation
-
+# Password validation. Built-in django rules.
+# - password can't be too similar to your username
+# - must be at least 8 characters
+# - can't be a common password like "password123"
+# - can't be all numbers
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', 
     },
 ]
 
 # Internationalization
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
 USE_TZ = True
 
 # Static & media files
-
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
@@ -94,11 +87,11 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Auth redirects
-
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Default primary key field type
-
+# Default primary key field type. 64-bit instead of regular int for auto-generated ID, 
+# just to avoid running out of IDs on large tables.
+#https://www.geeksforgeeks.org/python/bigautofield-django-models/
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

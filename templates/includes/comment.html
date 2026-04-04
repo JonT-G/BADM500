@@ -1,0 +1,24 @@
+{# Reusable single comment item. #}
+{# Requires: comment (Comment object, with .user_upvoted and .user_downvoted set by the view) #}
+{# The parent template's `user` variable is also used here (Django includes inherit parent context). #}
+<div class="comment">
+    <div class="avatar-sm">
+        {% include 'includes/avatar.html' with avatar_user=comment.author avatar_class="avatar-img" %}
+    </div>
+    <div class="comment-body">
+        <div class="comment-header">
+            <strong>{{ comment.author.username }}</strong>
+            <span>{{ comment.created_at|timesince }} ago</span>
+        </div>
+        <div class="comment-text">{{ comment.text }}</div>
+        <div class="comment-actions">
+            {% if user.is_authenticated %}
+            <a href="{% url 'vote_comment' comment.pk %}?type=up" class="comment-vote {% if comment.user_upvoted %}active-up{% endif %}">&#9650; {{ comment.upvote_count }}</a>
+            <a href="{% url 'vote_comment' comment.pk %}?type=down" class="comment-vote {% if comment.user_downvoted %}active-down{% endif %}">&#9660; {{ comment.downvote_count }}</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="comment-vote">&#9650; {{ comment.upvote_count }}</a>
+            <a href="{% url 'login' %}" class="comment-vote">&#9660; {{ comment.downvote_count }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

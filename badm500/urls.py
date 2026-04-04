@@ -1,4 +1,6 @@
-"""Root URL configuration for the BADM500 project."""
+"""Root URL configuration for the BADM500 project. Which URL goes where.
+So all URL routing goes in videos/url.py.
+"""
 
 from django.conf import settings
 from django.conf.urls.static import static

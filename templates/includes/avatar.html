@@ -1,0 +1,8 @@
+{# Reusable avatar image snippet. #}
+{# Pass: avatar_user (a User object), avatar_class (CSS class, e.g. 'avatar-img' or 'avatar-img-lg') #}
+{# Usage: {% include 'includes/avatar.html' with avatar_user=comment.author avatar_class="avatar-img" %} #}
+{% if avatar_user.profile.avatar %}
+<img src="{{ avatar_user.profile.avatar.url }}" alt="{{ avatar_user.username }}" class="{{ avatar_class }}">
+{% else %}
+{{ avatar_user.username|first|upper }}
+{% endif %}

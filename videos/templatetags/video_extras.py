@@ -1,4 +1,7 @@
-"""Custom template filters for the videos app."""
+"""Custom template filters for the videos app.
+Allows the templates to use {{ video.duration|format_duration }}.
+So converts 272 to 4:32, and 3672 to 1:01:12.
+"""
 from django import template
 register = template.Library()
 

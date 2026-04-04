@@ -1,5 +1,5 @@
 FROM python:3.11-slim
-
+# For now just use run.py. Later when activitypub is setup, use docker to test/demonstrate with 2 isolated containers 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

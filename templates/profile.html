@@ -1,18 +1,20 @@
+{# Page: Profile — shows a user's avatar, stats, and their videos (or about tab). #}
+{# profile_user is the user being viewed (not necessarily the logged-in user). #}
+{# Extends base.html. Uses the avatar include. #}
 {% extends 'base.html' %}
 {% load video_extras %}
 
 {% block title %}{{ profile_user.username }} - BADM500{% endblock %}
 
 {% block content %}
+
+{# Profile header: avatar, name, bio, stats, subscribe/edit button #}
 <div class="profile-header">
     <div class="profile-avatar">
-        {% if profile.avatar %}
-        <img src="{{ profile.avatar.url }}" alt="{{ profile_user.username }}" class="avatar-img-lg">
-        {% else %}
-        {{ profile_user.username|first|upper }}
-        {% endif %}
+        {% include 'includes/avatar.html' with avatar_user=profile_user avatar_class="avatar-img-lg" %}
     </div>
     <div class="profile-details">
+        {# get_full_name returns "First Last" if set, otherwise falls back to username #}
         <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
         <div class="profile-handle">@{{ profile_user.username }}</div>
         {% if profile.bio %}
@@ -33,6 +35,8 @@
             </div>
         </div>
     </div>
+
+    {# Show edit button if viewing your own profile, subscribe button if viewing someone else's #}
     {% if user == profile_user %}
     <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-outline">Edit Profile</a>
     {% elif user.is_authenticated %}
@@ -42,11 +46,13 @@
     {% endif %}
 </div>
 
+{# Tab navigation: Videos | About #}
 <div class="profile-tabs">
     <a href="?tab=videos" class="{% if tab == 'videos' %}active{% endif %}">Videos</a>
     <a href="?tab=about" class="{% if tab == 'about' %}active{% endif %}">About</a>
 </div>
 
+{# Videos tab #}
 {% if tab == 'videos' %}
 <div class="profile-tab-content active">
     <section class="video-grid">
@@ -70,11 +76,19 @@
         {% empty %}
         <div class="empty-state">
             <h2>No videos yet</h2>
-            <p>{% if user == profile_user %}<a href="{% url 'upload' %}">Upload your first video!</a>{% else %}This user hasn't uploaded any videos yet.{% endif %}</p>
+            <p>
+                {% if user == profile_user %}
+                <a href="{% url 'upload' %}">Upload your first video!</a>
+                {% else %}
+                This user hasn't uploaded any videos yet.
+                {% endif %}
+            </p>
         </div>
         {% endfor %}
     </section>
 </div>
+
+{# About tab #}
 {% else %}
 <div class="profile-tab-content active">
     <div class="video-description">
@@ -82,10 +96,14 @@
         {% if profile.bio %}
         <p>{{ profile.bio|linebreaksbr }}</p>
         {% else %}
-        <p class="text-muted">No bio yet.{% if user == profile_user %} <a href="{% url 'edit_profile' %}">Add one!</a>{% endif %}</p>
+        <p class="text-muted">
+            No bio yet.
+            {% if user == profile_user %}<a href="{% url 'edit_profile' %}">Add one!</a>{% endif %}
+        </p>
         {% endif %}
         <p><strong>Joined:</strong> {{ profile_user.date_joined|date:"F Y" }}</p>
         <p><strong>Username:</strong> @{{ profile_user.username }}</p>
+        {# Email is only shown to the profile owner themselves #}
         {% if profile_user.email and user == profile_user %}
         <p><strong>Email:</strong> {{ profile_user.email }}</p>
         {% endif %}

@@ -1,9 +1,13 @@
 """URL routing for the videos app."""
 
 from django.urls import path
-
 from . import views
 from .streaming import stream_video
+
+# URL patterns for the videos app. Maps URL paths to view functions.
+# <int:pk> captures the number (integer) and passes it as pk= to the view
+# name='watch' lets templates do {% url 'watch' video.pk %} instead of hardcoding /watch/5/.
+# also lets you use {% url %} tags in templates.
 
 urlpatterns = [
     # Pages

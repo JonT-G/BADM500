@@ -1,20 +1,18 @@
 # BADM500 - Video Sharing Platform
-
-A YouTube-style video sharing platform built with **Django** and **SQLite**. Zero JavaScript — all interactivity is handled server-side with Python or with pure CSS tricks.
+A YouTube-style video sharing platform built with **Django** and **SQLite**. Interactivity is with Python or with CSS.
 
 ## Tech Stack
-
 | Layer | Technology |
 |-------|-----------|
 | Backend | Django 5.2 (Python 3.11) |
 | Database | SQLite |
 | Frontend | Django templates + CSS |
 | Auth | Django built-in auth |
-| Container | Docker (optional) |
+| Container | Docker |
 
 ## Quick Start
-
 ```bash
+#
 # Install dependencies
 pip install django
 
