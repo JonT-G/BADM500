@@ -1,10 +1,10 @@
-# BADM500 — Video Sharing Platform
+# BADM500 — Video Sharing Platform using ActivityPub
 
-A YouTube-style video sharing platform built with Django and SQLite, intended to eventually support federation via ActivityPub.
+A YouTube-style video sharing platform built with Django, CSS, HTML, SQLite and ActivityPub.
 
 ## Running the app
 
-The simplest way is `python run.py` — it installs dependencies, runs migrations, and starts the server in one step.
+The simplest way is `python run.py`, it installs dependencies, runs migrations, and starts the server in one step.
 
 ```bash
 python run.py
