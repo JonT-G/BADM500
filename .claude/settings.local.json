@@ -3,12 +3,7 @@
     "allow": [
       "Bash(.venv/Scripts/python.exe manage.py check)",
       "Bash(python3 -)",
-      "Bash(python manage.py shell -c ':*)",
-      "Bash(mv \"c:/Users/ga5/Desktop/BADM500 - Bachelor/tests\" \"c:/Users/ga5/Desktop/BADM500 - Bachelor/test_data\")",
-      "Bash(mv seed_users.py test_users.py)",
-      "Bash(mv seed_videos.py test_videos.py)",
-      "Bash(mv seed_interactions.py test_interactions.py)",
-      "Bash(mv seed_notifications.py test_notifications.py)"
+      "Bash(python manage.py shell -c ':*)"
     ]
   }
 }
