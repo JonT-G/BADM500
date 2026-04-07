@@ -6,13 +6,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
-
 from ..forms import VideoUploadForm
 from ..models import Comment, CommentVote, Like, Profile, Subscription, Video, WatchHistory, WatchLater
 from .actions import _notify
-
 
 def index(request):
     """
@@ -20,11 +18,10 @@ def index(request):
     """
     query = request.GET.get('q', '').strip()
 
-    # Start with all public videos
     videos = Video.objects.filter(visibility='public')
 
     if query:
-        # Djangos way of doing OR operations.
+        # Djangos way of doing OR and AND operations.
         videos = videos.filter(
             Q(title__icontains=query) | Q(description__icontains=query) # icontains is case-insensitive, so "music" matches "Music" or "MUSIC".
         )
@@ -32,8 +29,9 @@ def index(request):
     # Paginator splits the full list of videos into pages of 12.
     paginator = Paginator(videos, 12)
     page = paginator.get_page(request.GET.get('page'))
+    page_base = f"?q={query}&" if query else "?"
 
-    return render(request, 'index.html', {'videos': page, 'query': query})
+    return render(request, 'index.html', {'videos': page, 'query': query, 'page_base': page_base})
 
 
 def watch(request, pk):
@@ -43,8 +41,7 @@ def watch(request, pk):
     """
     video = get_object_or_404(Video, pk=pk)
     video.views += 1
-    video.save(update_fields=['views']) #update_fields means only that one column is saved, not the entire row, faster and avoids accidental overwrites.
-
+    video.save(update_fields=['views']) 
     user = request.user
 
     # Default state for all buttons, updated if user is logged in
@@ -70,26 +67,22 @@ def watch(request, pk):
             Comment.objects.create(video=video, author=user, text=text)
             _notify(video.author, user, 'commented', video)
             messages.success(request, 'Comment posted!')
-            return redirect('watch', pk=pk)  # redirect to avoid resubmitting on refresh
+            return redirect('watch', pk=pk) 
 
     comments = video.comments.all()
     related_videos = Video.objects.filter(visibility='public').exclude(pk=pk)[:5]
 
-    # checks for if user has downvoted or liked comments on a video
+    # track which comments user has voted on
+    user_votes = {}
     if user.is_authenticated:
         user_votes = dict(
             CommentVote.objects.filter(user=user, comment__in=comments)
             .values_list('comment_id', 'is_upvote')
         )
-        for c in comments:
-            # returns None if the user interacted on this comment
-            c.user_upvoted   = user_votes.get(c.pk) is True
-            c.user_downvoted = user_votes.get(c.pk) is False
-    else:
-        # Not logged in, no reactions to comment possible
-        for c in comments:
-            c.user_upvoted = c.user_downvoted = False
-
+    for c in comments:
+        c.user_upvoted   = user_votes.get(c.pk) is True
+        c.user_downvoted = user_votes.get(c.pk) is False
+    #render watch page fecthing data from the database and pass it to the template 
     return render(request, 'watch.html', {
         'video': video,
         'comments': comments,
@@ -105,7 +98,6 @@ def watch(request, pk):
 def upload(request):
     """
     Upload page, shows the upload form and saves the video.
-    Redirect to /login/ if user is not logged in.
     """
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
@@ -117,7 +109,7 @@ def upload(request):
             return redirect('watch', pk=video.pk)
     else:
         form = VideoUploadForm()
-
+    # Redirect to /login/ if user is not logged in.
     return render(request, 'upload.html', {'form': form})
 
 
@@ -136,12 +128,16 @@ def profile(request, username):
             subscriber=request.user, channel=profile_user,
         ).exists()
 
+    display_name = profile_user.get_full_name() or profile_user.username
+
+    #render profile fecting data from database and passing it to the template
     return render(request, 'profile.html', {
         'profile_user': profile_user,
         'profile': profile_obj,
         'videos': videos,
         'sub_count': profile_user.subscribers.count(),
-        'total_views': sum(v.views for v in profile_user.videos.all()),
+        'total_views': profile_user.videos.aggregate(total=Sum('views'))['total'] or 0,
         'is_subscribed': is_subscribed,
-        'tab': request.GET.get('tab', 'videos'),  
+        'tab': request.GET.get('tab', 'videos'),
+        'display_name': display_name,
     })

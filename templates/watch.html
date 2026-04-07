@@ -1,18 +1,11 @@
-{# Page: Watch — video player with comments, like/save/subscribe actions, and related videos. #}
-{# Extends base.html. Uses the avatar and comment includes. #}
+{# Page: Watch video with comments, like/save/subscribe actions, and related videos. #}
 {% extends 'base.html' %}
 {% load video_extras %}
-
 {% block title %}{{ video.title }} - BADM500{% endblock %}
-
 {% block content %}
+
 <div class="player-layout">
-
-    {# --- Left column: player, info, comments --- #}
     <div class="player-main">
-
-        {# Video player. poster= shows the thumbnail before the user presses play. #}
-        {# src points to stream_video which supports seeking (HTTP range requests). #}
         <div class="player-container">
             <video controls {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}>
                 <source src="{% url 'stream_video' video.pk %}" type="video/mp4">
@@ -20,69 +13,30 @@
             </video>
         </div>
 
-        {# Title, view count, like/dislike/save buttons #}
         <div class="video-info">
             <h1>{{ video.title }}</h1>
             <div class="video-stats">
-                {# pluralize: outputs "1 view" vs "2 views" automatically #}
                 <span>{{ video.views }} view{{ video.views|pluralize }} &middot; {{ video.created_at|date:"F j, Y" }}</span>
-                <div class="video-actions">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'like' video.pk %}?type=like" class="action-btn {% if user_liked %}active-like{% endif %}">&#128077; {{ video.like_count }}</a>
-                    <a href="{% url 'like' video.pk %}?type=dislike" class="action-btn {% if user_disliked %}active-like{% endif %}">&#128078; {{ video.dislike_count }}</a>
-                    <a href="{% url 'toggle_save' video.pk %}" class="action-btn {% if is_saved %}active-like{% endif %}">&#128278; {% if is_saved %}Saved{% else %}Save{% endif %}</a>
-                    {% else %}
-                    <a href="{% url 'login' %}">&#128077; {{ video.like_count }}</a>
-                    <a href="{% url 'login' %}">&#128078; {{ video.dislike_count }}</a>
-                    <a href="{% url 'login' %}">&#128278; Save</a>
-                    {% endif %}
-                </div>
+                {% include 'includes/video_actions.html' %}
             </div>
         </div>
 
-        {# Channel bar: uploader avatar, name, subscriber count, subscribe button #}
-        <div class="channel-bar">
-            <div class="channel-info">
-                <div class="avatar">
-                    {% include 'includes/avatar.html' with avatar_user=video.author avatar_class="avatar-img-lg" %}
-                </div>
-                <div>
-                    <div class="channel-name">
-                        <a href="{% url 'profile' video.author.username %}">{{ video.author.username }}</a>
-                    </div>
-                    <div class="subscriber-count">
-                        @{{ video.author.username }} &middot; {{ video.author.subscribers.count }} subscriber{{ video.author.subscribers.count|pluralize }}
-                    </div>
-                </div>
-            </div>
-            {% if user.is_authenticated and user != video.author %}
-            <a href="{% url 'subscribe' video.author.username %}" class="btn-subscribe {% if is_subscribed %}subscribed{% endif %}">
-                {% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}
-            </a>
-            {% elif not user.is_authenticated %}
-            <a href="{% url 'login' %}" class="btn-subscribe">Subscribe</a>
-            {% endif %}
-        </div>
+        {% include 'includes/channel_bar.html' %}
 
-        {# Description — only shown if the video has one. linebreaksbr converts newlines to <br> tags. #}
         {% if video.description %}
         <div class="video-description">
             <p>{{ video.description|linebreaksbr }}</p>
         </div>
         {% endif %}
 
-        {# Delete button — only visible to the video's author #}
         {% if user == video.author %}
         <div class="delete-video-wrap">
             <a href="{% url 'delete_video' video.pk %}" class="btn btn-sm btn-delete-video">&#128465; Delete Video</a>
         </div>
         {% endif %}
 
-        {# Comments section #}
         <div class="comments-section">
             <h3>Comments ({{ comments|length }})</h3>
-
-            {# Comment form — only shown to logged-in users #}
             {% if user.is_authenticated %}
             <form method="post" class="comment-form">
                 {% csrf_token %}
@@ -93,12 +47,9 @@
                 <button type="submit" class="btn btn-sm btn-primary btn-comment-post">Post</button>
             </form>
             {% else %}
-            <p class="text-muted">
-                <a href="{% url 'login' %}">Sign in</a> to leave a comment.
-            </p>
+            <p class="text-muted"><a href="{% url 'login' %}">Sign in</a> to leave a comment.</p>
             {% endif %}
 
-            {# Comment list — each comment is rendered by includes/comment.html #}
             <div>
                 {% for comment in comments %}
                 {% include 'includes/comment.html' %}
@@ -109,35 +60,13 @@
         </div>
     </div>
 
-    {# --- Right column: related videos --- #}
-    <div class="right-sidebar">
-        <h3>Up Next</h3>
-        {% for rv in related_videos %}
-        <a href="{% url 'watch' rv.pk %}" class="sidebar-video">
-            <div class="thumb-sm">
-                {% if rv.thumbnail %}
-                <img src="{{ rv.thumbnail.url }}" alt="{{ rv.title }}">
-                {% else %}
-                <img src="https://placehold.co/168x94/16213e/e94560?text={{ rv.title|truncatewords:2|urlencode }}" alt="{{ rv.title }}">
-                {% endif %}
-                {# format_duration is a custom filter that converts seconds to "m:ss" format #}
-                {% if rv.duration %}<span class="duration">{{ rv.duration|format_duration }}</span>{% endif %}
-            </div>
-            <div class="thumb-info">
-                <h4>{{ rv.title }}</h4>
-                <p>{{ rv.author.username }} &middot; {{ rv.views }} views</p>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-
+    {% include 'includes/watch_also.html' %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    {# Saves and restores the playback position using the browser's sessionStorage. #}
-    {# This means if you refresh the page, the video resumes where you left off. #}
+    {# Save and restore video position using sessionStorage so refreshing resumes playback. #}
     {# sessionStorage is cleared when the browser tab is closed. #}
     (function () {
         var video = document.querySelector('video');

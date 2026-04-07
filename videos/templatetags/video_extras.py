@@ -1,4 +1,4 @@
-"""Custom template filters for the videos app.
+"""
 Allows the templates to use {{ video.duration|format_duration }}.
 So converts 272 to 4:32, and 3672 to 1:01:12.
 """
@@ -7,7 +7,6 @@ register = template.Library()
 
 @register.filter
 def format_duration(seconds):
-    """Convert seconds to 'M:SS' or 'H:MM:SS' format for duration badges."""
     if seconds is None:
         return ''
     seconds = int(seconds)

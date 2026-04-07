@@ -1,10 +1,8 @@
 /*
- * BADM500 - Main Stylesheet
- * Imports all CSS modules for easier maintenance.
+Imports all CSS modules used in html, just to make it easier to manage.
  */
 @import url('base.css');
 @import url('nav.css');
 @import url('videos.css');
 @import url('forms.css');
 @import url('profile.css');
-@import url('responsive.css');

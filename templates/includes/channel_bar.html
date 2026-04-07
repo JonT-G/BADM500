@@ -1,0 +1,45 @@
+{# Channel info and subscribe button shown below the video on the watch page. #}
+<div class="channel-bar">
+    <div class="channel-info">
+        <div class="avatar">
+            {% include 'includes/avatar.html' with avatar_user=video.author avatar_class="avatar-img-lg" %}
+        </div>
+        <div>
+            <div class="channel-name">
+                <a href="{% url 'profile' video.author.username %}">{{ video.author.username }}</a>
+            </div>
+            <div class="subscriber-count">
+                @{{ video.author.username }} &middot; {{ video.author.subscribers.count }} subscriber{{ video.author.subscribers.count|pluralize }}
+            </div>
+        </div>
+    </div>
+    {% if user.is_authenticated and user != video.author %}
+    <button class="btn-subscribe {% if is_subscribed %}subscribed{% endif %}"
+            id="btn-subscribe"
+            data-action="{% url 'subscribe' video.author.username %}">
+        <span id="subscribe-label">{% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}</span>
+    </button>
+    {% elif not user.is_authenticated %}
+    <a href="{% url 'login' %}" class="btn-subscribe">Subscribe</a>
+    {% endif %}
+</div>
+
+{% if user.is_authenticated and user != video.author %}
+<script>
+(function () {
+    var btn = document.getElementById('btn-subscribe');
+    btn.addEventListener('click', function () {
+        fetch(btn.dataset.action, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            btn.classList.toggle('subscribed', data.subscribed);
+            document.getElementById('subscribe-label').textContent = data.subscribed ? 'Subscribed' : 'Subscribe';
+            document.querySelector('.subscriber-count').textContent =
+                '@{{ video.author.username }} · ' + data.sub_count +
+                (data.sub_count === 1 ? ' subscriber' : ' subscribers');
+        });
+    });
+})();
+</script>
+{% endif %}

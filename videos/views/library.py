@@ -30,10 +30,10 @@ def liked_videos(request):
 @login_required
 def notifications_list(request):
     """
-    Shows the 100 most recent notifications for the user.
+    Shows the 50 most recent notifications for the user.
     """
     notifs = list(
-        request.user.notifications.select_related('actor', 'video').all()[:100]
+        request.user.notifications.select_related('actor', 'video').all()[:50]
     )
     request.user.notifications.filter(is_read=False).update(is_read=True)
     return render(request, 'notifications.html', {'notifications': notifs})

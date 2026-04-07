@@ -1,0 +1,21 @@
+{# Videos sidebar shown on the right of the watch page. #}
+{% load video_extras %}
+<div class="right-sidebar">
+    <h3>Watch Also</h3>
+    {% for rv in related_videos %}
+    <a href="{% url 'watch' rv.pk %}" class="sidebar-video">
+        <div class="thumb-sm">
+            {% if rv.thumbnail %}
+            <img src="{{ rv.thumbnail.url }}" alt="{{ rv.title }}">
+            {% else %}
+            <img src="https://placehold.co/168x94/1e1e1e/f85959?text={{ rv.title|truncatewords:2|urlencode }}" alt="{{ rv.title }}">
+            {% endif %}
+            {% if rv.duration %}<span class="duration">{{ rv.duration|format_duration }}</span>{% endif %}
+        </div>
+        <div class="thumb-info">
+            <h4>{{ rv.title }}</h4>
+            <p>{{ rv.author.username }} &middot; {{ rv.views }} views</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>

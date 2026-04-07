@@ -1,47 +1,52 @@
-# BADM500 — Video Sharing Platform using ActivityPub
+# BADM500 — Video Sharing Platform
 
-A YouTube-style video sharing platform built with Django, CSS, HTML, SQLite and ActivityPub.
+A YouTube-style video sharing platform built with Django, SQLite, and plain CSS/HTML.
 
 ## Running the app
-
-The simplest way is `python run.py`, it installs dependencies, runs migrations, and starts the server in one step.
 
 ```bash
 python run.py
 ```
 
-Or with Docker, when running multiple instances for federation testing:
+Installs dependencies, runs migrations, and starts the server in one step.
+
+- Site: **http://127.0.0.1:8080**
+- Admin panel: **http://127.0.0.1:8080/admin/**
+
+Or with Docker:
 
 ```bash
 docker-compose up --build
 ```
 
-The site: **http://127.0.0.1:8080**
+## Test data
 
-## Project structure
+The `test_data/` folder contains scripts to populate the database with test users, videos, and interactions for testing features.
 
+Run everything at once:
+
+```bash
+python test_data/test_all.py
 ```
-badm500/          Django project config (settings, urls, wsgi)
-videos/
-  models.py       Database tables (Video, Comment, Like, Subscription, etc.)
-  views/          Page views split by responsibility
-    pages.py      index, watch, upload, profile
-    auth.py       register, login, logout
-    actions.py    like, subscribe, save, vote
-    library.py    history, watch later, liked videos, notifications
-  forms.py        Upload, register, and profile forms
-  urls.py         URL routing
-  streaming.py    HTTP Range support so video seeking works
-  admin.py        Django admin panel config
-templates/
-  base.html       Shared layout: nav, sidebar, flash messages
-  includes/       Reusable partials: video_grid, comment, avatar
-  *.html          One file per page
-static/css/       CSS split by concern (nav, videos, forms, profile, responsive)
-db/db.sqlite3     SQLite database
-media/            Uploaded video and image files
+
+Or run individual tests:
+
+```bash
+python test_data/test_users.py         # creates test users
+python test_data/test_videos.py        # creates test videos
+python test_data/test_interactions.py  # likes, comments, subscriptions
+python test_data/test_notifications.py # notifications
 ```
+
+Test login credentials after running:
+
+| Username | Password   | Role      |
+|----------|------------|-----------|
+| admin    | admin123   | Superuser |
+| alice    | alice123   | User      |
+| bob      | bob123     | User      |
+| charlie  | charlie123 | User      |
 
 ## Tech
 
-Backend is Django 5 with Python 3.11. Database is SQLite. Frontend is Django templates and plain CSS.
+Backend: Django 5, Python 3.11. Database: SQLite. Frontend: Django templates, plain CSS.

@@ -32,6 +32,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'badm500.urls'
 #match URL from badm500/urls.py
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -42,7 +43,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'videos.context_processors.notifications',
+                'videos.notifications.notifications',
             ],
         },
     },
@@ -74,7 +75,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+# language and Timezone settings
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_TZ = True
@@ -91,7 +92,5 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Default primary key field type. 64-bit instead of regular int for auto-generated ID, 
-# just to avoid running out of IDs on large tables.
-#https://www.geeksforgeeks.org/python/bigautofield-django-models/
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#for auto-generating IDs for models. built-in Django
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

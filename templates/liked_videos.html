@@ -1,14 +1,8 @@
-{# Page: Liked Videos — shows all videos the logged-in user has liked. #}
-{# Extends base.html. Uses the video_grid include. #}
+{# Page: Liked Videos shows all videos the logged-in user has liked. #}
 {% extends 'base.html' %}
-
 {% block title %}Liked Videos - BADM500{% endblock %}
-
 {% block content %}
-<div class="page-header">
-    <h1>Liked Videos</h1>
-    <p>Videos you've given a thumbs up</p>
-</div>
+<div class="page-header"><h1>Liked Videos</h1></div>
 
 {% with empty_title="No liked videos" empty_text="Videos you like will show up here." %}
 {% include 'includes/video_grid.html' %}

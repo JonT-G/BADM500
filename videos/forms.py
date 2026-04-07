@@ -1,4 +1,5 @@
-"""Forms for video upload, user registration and profile editing.
+"""
+Create for video upload, user registration and profile editing.
 Render HTML input fields and validate submitted data.
 """
 from django import forms
@@ -7,7 +8,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Video
 
 class VideoUploadForm(forms.ModelForm):
-    """Upload form — file, title, description, and visibility."""
+    """Upload form of file, title, description and visibility."""
     class Meta:
         model = Video
         fields = ['file', 'title', 'description', 'visibility']

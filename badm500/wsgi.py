@@ -1,5 +1,5 @@
 """
-WSGI config.
+WSGI: Web Server Gateway Interface.
 
 Standard way python web apps talk to web servers.
 Check the formal documentation:

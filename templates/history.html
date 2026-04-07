@@ -1,14 +1,8 @@
-{# Page: History — shows the logged-in user's watch history, newest first. #}
-{# Extends base.html. Uses the video_grid include. #}
+{# Page: History, show users watch history (if logged in). #}
 {% extends 'base.html' %}
-
 {% block title %}History - BADM500{% endblock %}
-
 {% block content %}
-<div class="page-header">
-    <h1>History</h1>
-    <p>Videos you've watched recently</p>
-</div>
+<div class="page-header"><h1>History</h1></div>
 
 {% with empty_title="No history yet" empty_text="Videos you watch will appear here." %}
 {% include 'includes/video_grid.html' %}

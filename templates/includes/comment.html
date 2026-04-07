@@ -1,6 +1,4 @@
-{# Reusable single comment item. #}
-{# Requires: comment (Comment object, with .user_upvoted and .user_downvoted set by the view) #}
-{# The parent template's `user` variable is also used here (Django includes inherit parent context). #}
+{# a single comment row: avatar, username, timestamp, text, and up/downvote buttons #}
 <div class="comment">
     <div class="avatar-sm">
         {% include 'includes/avatar.html' with avatar_user=comment.author avatar_class="avatar-img" %}
@@ -11,10 +9,36 @@
             <span>{{ comment.created_at|timesince }} ago</span>
         </div>
         <div class="comment-text">{{ comment.text }}</div>
-        <div class="comment-actions">
+        <div class="comment-actions" id="comment-actions-{{ comment.pk }}">
             {% if user.is_authenticated %}
-            <a href="{% url 'vote_comment' comment.pk %}?type=up" class="comment-vote {% if comment.user_upvoted %}active-up{% endif %}">&#9650; {{ comment.upvote_count }}</a>
-            <a href="{% url 'vote_comment' comment.pk %}?type=down" class="comment-vote {% if comment.user_downvoted %}active-down{% endif %}">&#9660; {{ comment.downvote_count }}</a>
+            <button class="comment-vote {% if comment.user_upvoted %}active-up{% endif %}"
+                    data-action="{% url 'vote_comment' comment.pk %}?type=up"
+                    data-comment="{{ comment.pk }}" data-type="up">
+                &#9650; <span class="up-count">{{ comment.upvote_count }}</span>
+            </button>
+            <button class="comment-vote {% if comment.user_downvoted %}active-down{% endif %}"
+                    data-action="{% url 'vote_comment' comment.pk %}?type=down"
+                    data-comment="{{ comment.pk }}" data-type="down">
+                &#9660; <span class="down-count">{{ comment.downvote_count }}</span>
+            </button>
+            <script>
+            (function () {
+                var wrap = document.getElementById('comment-actions-{{ comment.pk }}');
+                wrap.querySelectorAll('.comment-vote').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        fetch(btn.dataset.action, {
+                            method: 'GET',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        }).then(function (r) { return r.json(); }).then(function (data) {
+                            wrap.querySelector('.up-count').textContent   = data.upvote_count;
+                            wrap.querySelector('.down-count').textContent = data.downvote_count;
+                            wrap.querySelector('[data-type="up"]').classList.toggle('active-up', data.upvoted);
+                            wrap.querySelector('[data-type="down"]').classList.toggle('active-down', data.downvoted);
+                        });
+                    });
+                });
+            })();
+            </script>
             {% else %}
             <a href="{% url 'login' %}" class="comment-vote">&#9650; {{ comment.upvote_count }}</a>
             <a href="{% url 'login' %}" class="comment-vote">&#9660; {{ comment.downvote_count }}</a>

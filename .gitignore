@@ -18,5 +18,5 @@ media/
 Thumbs.db
 .DS_Store
 
-# Docs (not source code)
+# Docs
 *.pdf

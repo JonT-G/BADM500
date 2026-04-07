@@ -1,8 +1,9 @@
-"""Django admin configuration for all video-platform models. Built-in django feature
+"""
+Django admin configuration for all video-platform models. Built-in django feature
 A full UI browser to view and manage all data.
+When doing "python run.py" in terminal a link to "admin panel" is printed and clickable.
 Username: admin
 Password: admin123
-Role: superuser 
 """
 from django.contrib import admin
 

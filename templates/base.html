@@ -1,6 +1,4 @@
-{# Base layout shared by every page. #}
-{# Other templates extend this with: {% extends 'base.html' %} #}
-{# They fill in content using: {% block content %}...{% endblock %} #}
+{# Base layout shared by every page. Other templates extend this#}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -11,15 +9,10 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
-    {% comment %}
-    CSS-only sidebar toggle: checkbox before nav so we can use ~ selector
-    {% endcomment %}
-    <input type="checkbox" id="sidebar-check" class="sidebar-check">
-
     <nav>
         <div class="nav-container">
             <div class="nav-left">
-                <label for="sidebar-check" class="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</label>
+                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
                 <a href="{% url 'index' %}" class="nav-logo">BADM<span>500</span></a>
             </div>
             <form class="nav-search" action="{% url 'index' %}" method="get">
@@ -36,7 +29,12 @@
                 </li>
                 <li><a href="{% url 'upload' %}" class="{% if request.resolver_match.url_name == 'upload' %}active{% endif %}">Upload</a></li>
                 <li><a href="{% url 'profile' user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-logout">Logout</button>
+                    </form>
+                </li>
                 {% else %}
                 <li><a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a></li>
                 {% endif %}
@@ -85,7 +83,7 @@
                 <span class="sidebar-label">Gaming</span>
             </a>
         </aside>
-        <label for="sidebar-check" class="sidebar-overlay"></label>
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <main class="app-main">
             {% if messages %}
@@ -100,5 +98,27 @@
         </main>
     </div>
     {% block scripts %}{% endblock %}
+    
+    
+    {# JavaScript for sidebar toggle #}
+    <script>
+        const toggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('left-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        toggle.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            } else {
+                sidebar.classList.toggle('collapsed');
+            }
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    </script>
 </body>
 </html>

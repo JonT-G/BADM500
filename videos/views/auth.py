@@ -1,9 +1,10 @@
 """
-Authentication views, register, login, and logout.
+Authentication views, register and login.
 These views redirect away immediately if the user is already logged in.
+Logout is handled by Django's built-in LogoutView in urls.py.
 """
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 
 from ..forms import RegisterForm
@@ -19,9 +20,9 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()  # creates and saves the User in the database
-            login(request, user)  # log the new user in right away
-            messages.success(request, 'Account created! Welcome to BADM500.')
+            user = form.save()  
+            login(request, user) 
+            messages.success(request, f"New account created:{user.username}")
             return redirect('index')
     else:
         form = RegisterForm()
@@ -50,9 +51,3 @@ def login_view(request):
         messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
-
-
-def logout_view(request):
-    """Clear session and redirect to home."""
-    logout(request)
-    return redirect('index')

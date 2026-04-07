@@ -1,10 +1,7 @@
 """
 Database models for the BADM500 video-sharing platform.
-
-Models
-------
-Video, Comment, Like, Subscription, CommentVote, Profile,
-WatchHistory, WatchLater, Notification.
+Defines the data structure for videos, comments, likes, subscriptions, comment votes, profiles,
+watch history, watch later, and notifications.
 """
 from django.contrib.auth.models import User
 from django.db import models
@@ -25,21 +22,22 @@ class Video(models.Model):
     file = models.FileField(upload_to='videos/')
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True)
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos') #on_delete=models.CASCADE means if the user is deleted, all their videos are also deleted. to get rid of orphan data and keep database clean.
     views = models.PositiveIntegerField(default=0)
     duration = models.PositiveIntegerField(null=True, blank=True, help_text='Duration in seconds')
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-created_at'] # Newest videos first in queries by default
 
     def __str__(self):
-        return self.title
+        return self.title # Show title instead of something like "Video object (1)". Like the rest of __str__ further down, it is only for convenience when debugging in the admin panel.
 
+    #count rows in database and display the number of likes and dislikes on the video. 
     @property
     def like_count(self):
         """Number of likes on this video."""
-        return self.likes.filter(is_like=True).count()
+        return self.likes.filter(is_like=True).count() 
 
     @property
     def dislike_count(self):
@@ -73,14 +71,14 @@ class Like(models.Model):
     """A like or dislike on a video."""
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    is_like = models.BooleanField(default=True)
+    is_like = models.BooleanField(default=True) # True for like, False for dislike. Only gets created when user clicks like or dislike button.
 
     class Meta:
-        unique_together = ('video', 'user')
+        unique_together = ('video', 'user') #prevent duplicate from the same user on the same video
 
     def __str__(self):
         action = 'liked' if self.is_like else 'disliked'
-        return f'{self.user.username} {action} {self.video.title}'
+        return f'{self.user.username} {action} {self.video.title}' #see something like ""username" liked "video title" instead of "Like object (1)"
 
 
 class Subscription(models.Model):
@@ -172,14 +170,15 @@ class Notification(models.Model):
 
     @property
     def message(self):
-        """Give the notification message. For example: "Jon liked your video "'m Tired"." """
+        """Return the notification message. For example: 'liked your video "Morning Vlog"'"""
         verb_text = self.get_verb_display()
         if self.video and self.verb != 'subscribed':
             return f'{verb_text} "{self.video.title}"'
         return verb_text
 
 
-# Auto-create a Profile whenever a new User is created, no need to do manually.
+# Auto-create a Profile whenever a new User is created, 
+# so when user visits their profile page, there is already a Profile object to work with and does not crash. 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

@@ -1,4 +1,4 @@
-/* ===== Profile Page ===== */
+/* profile header with avatar, stats, and subscribe button */
 .profile-header {
     display: flex;
     align-items: center;
@@ -44,7 +44,7 @@
     border: 2px solid var(--border);
 }
 
-/* Smaller inline avatar placeholder on edit-profile page */
+/* small avatar shown on the edit profile page */
 .avatar-inline {
     width: 64px;
     height: 64px;
@@ -62,16 +62,10 @@
 .profile-avatar {
     width: 96px;
     height: 96px;
-    border-radius: 50%;
     background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 2.4em;
     color: #fff;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
+    box-shadow: 0 4px 16px rgba(248, 89, 89, 0.3);
 }
 
 .profile-details h1 {
@@ -114,7 +108,7 @@
     letter-spacing: 0.04em;
 }
 
-/* ===== CSS-Only Tabs using query params ===== */
+/* tabs on the profile page (videos / about) */
 .profile-tabs {
     display: flex;
     gap: 4px;

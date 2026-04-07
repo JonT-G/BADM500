@@ -1,7 +1,4 @@
-{# Reusable video card grid. #}
-{# Requires: videos (queryset or list of Video objects) #}
-{# Optional: empty_title, empty_text — shown when the list is empty #}
-{# Usage: {% include 'includes/video_grid.html' %} #}
+{# grid of video: used on home, profile, history, liked videos, etc. #}
 {% load video_extras %}
 <section class="video-grid">
     {% for video in videos %}
@@ -10,7 +7,7 @@
             {% if video.thumbnail %}
             <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">
             {% else %}
-            <img src="https://placehold.co/400x225/1a1a2e/e94560?text={{ video.title|truncatewords:2|urlencode }}" alt="{{ video.title }}">
+            <img src="https://placehold.co/400x225/1e1e1e/f85959?text={{ video.title|truncatewords:2|urlencode }}" alt="{{ video.title }}">
             {% endif %}
             {% if video.duration %}<span class="duration">{{ video.duration|format_duration }}</span>{% endif %}
         </div>

@@ -1,16 +1,14 @@
-{# Page: Confirm Delete — asks the user to confirm before deleting a video. #}
-{# The actual deletion happens on POST in the view. This page is only shown on GET. #}
-{# Extends base.html. #}
+{# Page: Confirm Delete, asks the user to confirm before deleting a video. #}
+{# Actual deletion happens on POST in the view (library.py). This page is only shown on GET. #}
 {% extends 'base.html' %}
-
-{% block title %}Delete Video - BADM500{% endblock %}
+{% block title %}Delete Video{% endblock %}
 
 {% block content %}
 <div class="auth-container">
     <div class="form-container">
         <h1>Delete Video</h1>
-        <p class="form-subtitle">Are you sure you want to delete <strong>{{ video.title }}</strong>? This cannot be undone.</p>
-
+        <p class="form-subtitle">Are you sure you want to delete? <strong>{{ video.title }}</strong></p>
+        {#csrf is to not get status 403 error code #}
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary btn-danger">Yes, Delete</button>

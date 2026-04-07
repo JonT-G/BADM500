@@ -1,11 +1,8 @@
-{# Page: Upload — form for uploading a new video. #}
-{# enctype="multipart/form-data" on the form is required for file uploads to work. #}
-{# Extends base.html. #}
+{# Page: Upload form for uploading a new video. #}
 {% extends 'base.html' %}
-
 {% block title %}Upload - BADM500{% endblock %}
-
 {% block content %}
+
 <div class="form-container">
     <h1>Upload Video</h1>
     <p class="form-subtitle">Share your moments with the world</p>
@@ -29,7 +26,7 @@
             </label>
             {{ form.file }}
             {% if form.file.errors %}
-            <ul class="errorlist">{% for e in form.file.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            <ul class="errorlist">{% for error in form.file.errors %}<li>{{ error }}</li>{% endfor %}</ul>
             {% endif %}
         </div>
 
@@ -37,7 +34,7 @@
             <label for="id_title">Title</label>
             {{ form.title }}
             {% if form.title.errors %}
-            <ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            <ul class="errorlist">{% for error in form.title.errors %}<li>{{ error }}</li>{% endfor %}</ul>
             {% endif %}
         </div>
 

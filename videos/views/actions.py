@@ -1,11 +1,10 @@
 """
 Handle user interactions that write to the database.
-None of these render a page, so they all just redirect back after doing their work.
-All require the user to be logged in (@login_required).
 """
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from ..models import Comment, CommentVote, Like, Notification, Subscription, Video, WatchLater
 
 def _notify(recipient, actor, verb, video=None):
@@ -14,15 +13,15 @@ def _notify(recipient, actor, verb, video=None):
     """
     if recipient == actor:
         return  
-    Notification.objects.get_or_create( # no self-notifications (e.g. liking your own video)
-        recipient=recipient, actor=actor, verb=verb, video=video,
-    )
+    # no self-notifications, like liking your own video
+    Notification.objects.get_or_create( recipient=recipient, actor=actor, verb=verb, video=video,)
 
 
 @login_required
 def toggle_like(request, pk):
     """
     Like or dislike a video. Reads type=like or type=dislike from the URL.
+    Returns JSON to not refresh page.
     """
     video = get_object_or_404(Video, pk=pk)
     is_like = request.GET.get('type', 'like') == 'like'
@@ -35,14 +34,22 @@ def toggle_like(request, pk):
     if not created:
         if like_obj.is_like == is_like:
             like_obj.delete()           # click again and it removes the like/dislike
-        else:
-            like_obj.is_like = is_like  # click the opposite and it switches from like to dislike or vice versa
+        else: 
+            #leftside is_like is database field and rightside is the new value from the URL
+            like_obj.is_like = is_like  # clicked the other button and overwrite it
             like_obj.save()
 
     # Only notify on a like, not a dislike
     if Like.objects.filter(video=video, user=request.user, is_like=True).exists():
         _notify(video.author, request.user, 'liked', video)
-    return redirect('watch', pk=pk)
+
+    user_like = Like.objects.filter(video=video, user=request.user).first()
+    return JsonResponse({
+        'liked':         user_like is not None and user_like.is_like,
+        'disliked':      user_like is not None and not user_like.is_like,
+        'like_count':    video.like_count,
+        'dislike_count': video.dislike_count,
+    })
 
 
 @login_required
@@ -56,18 +63,23 @@ def subscribe(request, username):
 
     # Cant subscribe to yourself.
     if request.user == channel:
-        return redirect('profile', username=username)
+        return JsonResponse({'error': 'Cannot subscribe to yourself.'}, status=400)
 
     sub, created = Subscription.objects.get_or_create(
         subscriber=request.user, channel=channel,
     )
     if not created:
         sub.delete()  # already subscribed, unsubscribe instead
+        is_subscribed = False
     else:
         _notify(channel, request.user, 'subscribed')
+        is_subscribed = True
 
-    # Go back to whatever page the user came from (profile or watch page)
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    #Json to not refresh page when action is performed
+    return JsonResponse({
+        'subscribed': is_subscribed,
+        'sub_count':  channel.subscribers.count(),
+    })
 
 
 @login_required
@@ -77,7 +89,10 @@ def toggle_watch_later(request, pk):
     obj, created = WatchLater.objects.get_or_create(user=request.user, video=video)
     if not created:
         obj.delete()
-    return redirect('watch', pk=pk)
+        is_saved = False
+    else:
+        is_saved = True
+    return JsonResponse({'saved': is_saved})
 
 
 @login_required
@@ -95,13 +110,18 @@ def vote_comment(request, pk):
 
     if not created:
         if vote_obj.is_upvote == is_upvote:
-            vote_obj.delete()           # click again and it removes the upvote/downvote
+            vote_obj.delete()           
         else:
-            vote_obj.is_upvote = is_upvote  # click the opposite and it switches from upvote to downvote or vice versa
+            vote_obj.is_upvote = is_upvote
             vote_obj.save()
 
-    # Only notify on upvote, not downvote
     if CommentVote.objects.filter(comment=comment, user=request.user, is_upvote=True).exists():
         _notify(comment.author, request.user, 'upvoted', comment.video)
 
-    return redirect('watch', pk=comment.video.pk)
+    user_vote = CommentVote.objects.filter(comment=comment, user=request.user).first()
+    return JsonResponse({
+        'upvoted':        user_vote is not None and user_vote.is_upvote,
+        'downvoted':      user_vote is not None and not user_vote.is_upvote,
+        'upvote_count':   comment.upvote_count,
+        'downvote_count': comment.downvote_count,
+    })

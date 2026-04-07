@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Basically sets up migration files and creates database tables in db.sqlite3, it crashes without it. A django built-in tool"""
+"""Basically sets up migration files and creates database tables in db.sqlite3, it crashes without it."""
 import os
 import sys
 
@@ -10,7 +10,7 @@ def main():
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
-            "Couldn't import Django. Check if installed"
+            "Couldn't import Django. maybe you need to install it?"
         ) from exc
     execute_from_command_line(sys.argv)
 

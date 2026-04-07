@@ -1,11 +1,7 @@
-{# Page: Notifications — lists all notifications for the logged-in user. #}
-{# Unread notifications are marked as read the moment this page is opened (done in the view). #}
-{# Extends base.html. #}
 {% extends 'base.html' %}
-
 {% block title %}Notifications - BADM500{% endblock %}
-
 {% block content %}
+
 <div class="page-header">
     <h1>Notifications</h1>
     {% if notifications %}
@@ -16,9 +12,6 @@
 {% if notifications %}
 <div class="notification-list">
     {% for notif in notifications %}
-
-    {# If the notification is linked to a video, the whole item is a clickable link. #}
-    {# Otherwise it is just a plain div (e.g. a subscription notification has no video). #}
     {% if notif.video %}
     <a href="{% url 'watch' notif.video.pk %}" class="notification-item {% if not notif.is_read %}unread{% endif %}">
     {% else %}
@@ -45,9 +38,6 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state">
-    <h2>No notifications</h2>
-    <p>You're all caught up!</p>
-</div>
+<div class="empty-state"><h2>No notifications</h2><p>You're all caught up!</p></div>
 {% endif %}
 {% endblock %}
