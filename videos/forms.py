@@ -13,23 +13,24 @@ class VideoUploadForm(forms.ModelForm):
         model = Video
         fields = ['file', 'title', 'description', 'visibility']
         widgets = {
-            'title': forms.TextInput(attrs={
-                'placeholder': 'Give your video a title',
-                'class': 'form-input',
-            }),
-            'description': forms.Textarea(attrs={
-                'placeholder': 'Describe your video...',
-                'rows': 4,
-                'class': 'form-input',
-            }),
-            'visibility': forms.Select(attrs={
-                'class': 'form-input',
-            }),
-            'file': forms.ClearableFileInput(attrs={
-                'accept': 'video/*',
-                'id': 'file',
-            }),
-        }
+        'title': forms.TextInput(attrs={
+            'placeholder': 'Give your video a title',
+            'class': 'form-input',
+        }),
+        'description': forms.Textarea(attrs={
+            'placeholder': 'Describe your video...',
+            'rows': 4,
+            'class': 'form-input',
+        }),
+        'visibility': forms.Select(attrs={
+            'class': 'form-input',
+        }),
+        'file': forms.ClearableFileInput(attrs={
+            'accept': 'video/*',
+            'id': 'file',
+        }),
+    }
+
 
 class RegisterForm(UserCreationForm):
     """Extends Django's built-in form with an email field."""

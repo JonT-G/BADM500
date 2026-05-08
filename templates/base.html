@@ -12,7 +12,6 @@
     <nav>
         <div class="nav-container">
             <div class="nav-left">
-                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
                 <a href="{% url 'index' %}" class="nav-logo">BADM<span>500</span></a>
             </div>
             <form class="nav-search" action="{% url 'index' %}" method="get">
@@ -83,7 +82,6 @@
                 <span class="sidebar-label">Gaming</span>
             </a>
         </aside>
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <main class="app-main">
             {% if messages %}
@@ -99,26 +97,3 @@
     </div>
     {% block scripts %}{% endblock %}
     
-    
-    {# JavaScript for sidebar toggle #}
-    <script>
-        const toggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.getElementById('left-sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-
-        toggle.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-            } else {
-                sidebar.classList.toggle('collapsed');
-            }
-        });
-
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-    </script>
-</body>
-</html>

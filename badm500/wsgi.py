@@ -2,7 +2,7 @@
 WSGI: Web Server Gateway Interface.
 
 Standard way python web apps talk to web servers.
-Check the formal documentation:
+Documentation:
 https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 """
 

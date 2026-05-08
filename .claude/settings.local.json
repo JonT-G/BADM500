@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(.venv/Scripts/python.exe manage.py check)",
-      "Bash(python3 -)",
-      "Bash(python manage.py shell -c ':*)"
-    ]
-  }
-}

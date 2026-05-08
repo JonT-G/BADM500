@@ -21,7 +21,7 @@ def _range_response(request, path):
     f = open(path, 'rb') # open in read and binary mode 
 
     if range_header:
-        # Range header: "bytes=12345-67890" or "bytes=12345-" (till end of file)
+        # Range header: "bytes=12345-67890" or "bytes=12345-" (tilll end of file)
         start, _, end = range_header.replace('bytes=', '').partition('-')
         start = int(start)
         end = int(end) if end else file_size - 1
@@ -47,6 +47,8 @@ def stream_video(request, pk):
     So find video with id=5 in database if found begin _range_response and if not raise error.
     """
     video = get_object_or_404(Video, pk=pk)
+    if not video.file or not video.file.name:
+        raise Http404('Video file not found.')
     path = video.file.path
     if not os.path.exists(path):
         raise Http404('Video file not found.')

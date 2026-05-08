@@ -1,6 +1,6 @@
 # BADM500 — Video Sharing Platform
 
-A YouTube-style video sharing platform built with Django, SQLite, plain CSS/HTML and implemented with activitypub (yet to do) 
+A YouTube-style video sharing platform built with Django, SQLite, plain CSS/HTML. Implemented with activitypub protocol. 
 
 ## Running the app
 
@@ -12,41 +12,24 @@ Installs dependencies, runs migrations, and starts the server in one step.
 
 - Site: **http://127.0.0.1:8080**
 - Admin panel: **http://127.0.0.1:8080/admin/**
+- Pbulic URL: **https://hardwood-mortified-stump.ngrok-free.dev**
 
-Or with Docker:
+One normal account was premade:
+username: bob
+password: bobbobbob123!
 
-```bash
-docker-compose up --build
-```
-
-## Test data
-
-The `test_data/` folder contains scripts to populate the database with test users, videos, and interactions for testing features.
-
-Run everything at once:
-
-```bash
-python test_data/test_all.py
-```
-
-Or run individual tests:
-
-```bash
-python test_data/test_users.py         # creates test users
-python test_data/test_videos.py        # creates test videos
-python test_data/test_interactions.py  # likes, comments, subscriptions
-python test_data/test_notifications.py # notifications
-```
-
-Test login credentials after running:
-
-| Username | Password   | Role      |
-|----------|------------|-----------|
-| admin    | admin123   | Superuser |
-| alice    | alice123   | User      |
-| bob      | bob123     | User      |
-| charlie  | charlie123 | User      |
+and a superuser:
+username: admin
+password: admin123
 
 ## Tech
 
 Backend: Django 5, Python 3.11. Database: SQLite. Frontend: Django templates, plain CSS.
+
+
+## To test that it is connected to the fediverse the following websites can be used (ngrok and app needs to be running):
+    - https://activitypub.academy
+    - https://browser.pub
+For activitypub academy you make a account, it make one random and in the search bar you type "@alice@hardwood-mortified-stump.ngrok-free.dev" and it will pub up and you can follow and stuff. you can then check with the activity log at right handside for more information. 
+For Broser.pub which is a fediverse explorer which handles and it fetches and renders raw JSON in easy to read format (not really needed since activitypub.academy is enough) but in searchbar you do: "https://hardwood-mortified-stump.ngrok-free.dev/users/alice".
+

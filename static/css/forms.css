@@ -124,17 +124,12 @@
     font-size: 0.85em;
 }
 
-/* instead of default file input, the styled box above is used */
-.file-upload-group input[type="file"] {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+/* helps style the file input */
+.form-group input[type="file"]:not(.file-upload-group input) {
+    background: var(--bg-secondary);
+    padding: 10px;
+    cursor: pointer;
+    border-style: dashed;
 }
 
 .file-upload-group .file-name-display {

@@ -2,12 +2,17 @@
 Render the main pages of the site.
 Each function receives a request, fetches data from the database, and returns an HTML page.
 """
+import cv2
+import tempfile
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.files.base import ContentFile
+
 from ..forms import VideoUploadForm
 from ..models import Comment, CommentVote, Like, Profile, Subscription, Video, WatchHistory, WatchLater
 from .actions import _notify
@@ -96,20 +101,39 @@ def watch(request, pk):
 
 @login_required
 def upload(request):
-    """
-    Upload page, shows the upload form and saves the video.
-    """
+    """Upload page, shows the upload form and saves the video."""
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            video = form.save(commit=False) # do not save to database yet, so author can be set.
+            video = form.save(commit=False)
             video.author = request.user
             video.save()
+
+            # Auto generate thumbnail from first frame if none uploaded
+            if not video.thumbnail and video.file:
+                try:
+                    cap = cv2.VideoCapture(video.file.path)
+                    ret, frame = cap.read()
+                    if ret:
+                        # Save frame to a temp file, then attach to model
+                        tmp = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
+                        cv2.imwrite(tmp.name, frame)
+                        with open(tmp.name, 'rb') as f:
+                            video.thumbnail.save(
+                                f'thumb_{video.pk}.jpg',
+                                ContentFile(f.read()),
+                                save=True,
+                            )
+                        os.remove(tmp.name)
+                    cap.release()
+                except Exception:
+                    pass  # if no thumbnail just skip it and leave blank
+
             messages.success(request, 'Video uploaded successfully!')
             return redirect('watch', pk=video.pk)
     else:
         form = VideoUploadForm()
-    # Redirect to /login/ if user is not logged in.
+
     return render(request, 'upload.html', {'form': form})
 
 

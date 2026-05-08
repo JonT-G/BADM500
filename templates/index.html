@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-header"><h1>Latest Videos</h1></div>
 
-{% with empty_title="No videos yet" empty_text='Be the first to <a href="/upload/">upload a video</a>!' %}
+{% with empty_title="No videos yet"%}
 {% include 'includes/video_grid.html' %}
 {% endwith %}
 

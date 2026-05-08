@@ -112,7 +112,11 @@ class Profile(models.Model):
     """User profile with bio and avatar image."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, default='')
+
+    # ActivityPub Actor keypair. On first save. Used for HTTP Signatures.
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    public_key = models.TextField(blank=True, default='')
+    private_key = models.TextField(blank=True, default='')
 
     def __str__(self):
         return f'{self.user.username} profile'
@@ -176,10 +180,11 @@ class Notification(models.Model):
             return f'{verb_text} "{self.video.title}"'
         return verb_text
 
-
-# Auto-create a Profile whenever a new User is created, 
-# so when user visits their profile page, there is already a Profile object to work with and does not crash. 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """
+    Signal handler to create a Profile whenever a new User is created
+    so when user visits their profile page, there is already a Profile object to work with and does not crash.  
+    """
     if created:
         Profile.objects.get_or_create(user=instance)

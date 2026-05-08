@@ -54,7 +54,7 @@
                 {% for comment in comments %}
                 {% include 'includes/comment.html' %}
                 {% empty %}
-                <p class="text-muted">No comments yet. Be the first!</p>
+                <p class="text-muted">No comments yet</p>
                 {% endfor %}
             </div>
         </div>
@@ -62,24 +62,4 @@
 
     {% include 'includes/watch_also.html' %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    {# Save and restore video position using sessionStorage so refreshing resumes playback. #}
-    {# sessionStorage is cleared when the browser tab is closed. #}
-    (function () {
-        var video = document.querySelector('video');
-        var storageKey = 'vt_{{ video.pk }}';
-
-        video.addEventListener('loadedmetadata', function () {
-            var savedTime = sessionStorage.getItem(storageKey);
-            if (savedTime) video.currentTime = +savedTime;
-        });
-
-        video.addEventListener('timeupdate', function () {
-            sessionStorage.setItem(storageKey, video.currentTime);
-        });
-    })();
-</script>
 {% endblock %}

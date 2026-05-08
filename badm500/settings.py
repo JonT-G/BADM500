@@ -1,12 +1,21 @@
 """Django settings for the video-sharing platform."""
 
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-#just for cookies and sessions, but should be random and secret if real production. Maybe change?
-SECRET_KEY = 'ThisIsForCokkiesAndSessionsOnly'
-DEBUG = True
-ALLOWED_HOSTS = []
+#just for cookies and sessions. In production set DJANGO_SECRET_KEY in the environment.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'ThisIsForCokkiesAndSessionsOnly')
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
+ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h]
+
+# Public URL where this instance is reachable.
+SITE_URL = 'https://hardwood-mortified-stump.ngrok-free.dev'
+
+ALLOWED_HOSTS = ['hardwood-mortified-stump.ngrok-free.dev', 'localhost','127.0.0.1',]
+
+CSRF_TRUSTED_ORIGINS = ['https://hardwood-mortified-stump.ngrok-free.dev']
+
 
 # Application definition
 #https://docs.djangoproject.com/en/6.0/ref/contrib/
@@ -18,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'videos',
+    'federation',
 ]
 
 # code that runs on every request, in order.
