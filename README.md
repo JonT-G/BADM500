@@ -1,6 +1,10 @@
 # BADM500 — Video Sharing Platform
 
+<<<<<<< HEAD
 A YouTube-style video sharing platform built with Django, SQLite, plain CSS/HTML. Implemented with activitypub protocol. 
+=======
+A YouTube-style video sharing platform built with Django, SQLite, plain CSS/HTML and implemented with activitypub (yet to do) 
+>>>>>>> 84599dd83d2548dd667b4951adee52aaebd72f33
 
 ## Running the app
 
